@@ -64,7 +64,7 @@ const Home = () => {
 					{toDos.map((item,index)=>{
 						return(<li key={index} className="border rounded text-body-secondary">{item.label}
 						<span>
-							<i className="fa-solid fa-xmark" onClick={() => eliminateElement(index)}></i>
+							<i className="fa-solid fa-xmark" onClick={() => deleteTask(index)}></i>
 						</span>
 					</li>)
 						
