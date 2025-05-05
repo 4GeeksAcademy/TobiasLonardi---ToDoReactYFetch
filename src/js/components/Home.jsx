@@ -54,7 +54,7 @@ const Home = () => {
 					placeholder="what do we have to do?"
 					name="label"
 					value={task.label}
-					onChange={onChangeTask }
+					onChange={onChangeTask}
 					onKeyDown={saveTask}
 
 					
