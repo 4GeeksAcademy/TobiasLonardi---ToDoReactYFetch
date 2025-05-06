@@ -1,17 +1,48 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 //include images into your bundle
 import rigoImage from "../../img/rigo-baby.jpg";
 
 //create your first component
 const Home = () => {
+
+	const defaultTaskValue ={
+		label: "",
+		isDone: false
+	}
+	const baseURL = "https://playground.4geeks.com/todo"
+
 	const [task, setTask] = useState({
 		label: "",
 		isDone: false
 	})
 
 	const [toDos, setToDos] = useState([])
+
+	//esto es lo mismo que utilizar async function getAllTask(){}
+
+	const getAllTask = async() =>{
+		try {
+			const response = await fetch(`${baseURL}/users/tobias`)
+			const data = await response.json()
+			if(response.ok){
+				setToDos(data.todos)
+			}
+			if(response.status == 404){
+				console.log("crear un usuario")
+				createUser()
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	useEffect(()=>{
+		getAllTask()
+	}, [])
+
+
 
 	const onChangeTask = (event) =>{
 		setTask({
@@ -21,24 +52,57 @@ const Home = () => {
 
 	}
 
-	const saveTask = (event) =>{
-
-		if(event.key=="Enter" ){
-			setToDos(
-				[...toDos,
-					task,
-				]
-			)
-			setTask({
-				label: "",
-				isDone: false
+	async function createUser() {
+		try {
+			const response = await fetch(`${baseURL}/users/tobias`, {
+				method:"POST"
 			})
+			if(!response.ok){
+				console.log("error")
+			}
+		} catch (error) {
+			console.log(error)
 		}
+		
 	}
 
-	const deleteTask = (value) =>{
-		const result = toDos.filter((__,index) => index!=value)
-		setToDos(result)
+	async function saveTask (event){
+		if(event.key == "Enter"){
+			try {
+				const response = await fetch(`${baseURL}/todos/tobias`,{
+					method: "POST",
+					headers:{
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(task)
+				})
+				if(response.ok){
+					getAllTask()
+					setTask(defaultTaskValue)
+				}
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		
+	}
+
+	//const deleteTask = (value) =>{
+	//	const result = toDos.filter((__,index) => index!=value)
+	//	setToDos(result)
+	//}
+
+	async function deleteTask(id){
+		try {
+			const response = await fetch(`${baseURL}/todos/${id}`,
+				{method: "DELETE"}
+			)
+			if(response.ok){
+				getAllTask()
+			}
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	return (
@@ -61,10 +125,10 @@ const Home = () => {
 					/>
 				</form>
 				<ul>
-					{toDos.map((item,index)=>{
-						return(<li key={index} className="border rounded text-body-secondary">{item.label}
+					{toDos.map((item)=>{
+						return(<li key={item.id} className="border rounded text-body-secondary">{item.id} {item.label}
 						<span>
-							<i className="fa-solid fa-xmark" onClick={() => deleteTask(index)}></i>
+							<i className="fa-solid fa-xmark" onClick={() => deleteTask(item.id)}></i>
 						</span>
 					</li>)
 						
