@@ -60,6 +60,9 @@ const Home = () => {
 			if(!response.ok){
 				console.log("error")
 			}
+			else{
+				getAllTask();
+			}
 		} catch (error) {
 			console.log(error)
 		}
@@ -105,6 +108,20 @@ const Home = () => {
 		}
 	}
 
+	async function deleteAllTask() {
+		try {
+			const response = await fetch(`${baseURL}/users/tobias`,{
+				method:"DELETE"
+			})
+			if(response.ok){
+				getAllTask();
+			}
+		} catch (error) {
+			console.log(error)
+		}
+		
+	}
+
 	return (
 		<div className="container py-5">
 			<div className="row justify-content-center">
@@ -126,7 +143,7 @@ const Home = () => {
 				</form>
 				<ul>
 					{toDos.map((item)=>{
-						return(<li key={item.id} className="border rounded text-body-secondary">{item.id} {item.label}
+						return(<li key={item.id} className="border rounded text-body-secondary"> {item.label}
 						<span>
 							<i className="fa-solid fa-xmark" onClick={() => deleteTask(item.id)}></i>
 						</span>
@@ -135,11 +152,13 @@ const Home = () => {
 					})}
 				</ul>
 				<div className="d-flex justify-content-start align-items-center border rounded p-1">
-				<h6 className="text-center text-body-secondary" >tengo en total {toDos.length}</h6>
+				<h6 className="text-center text-body-secondary">tengo en total {toDos.length}</h6>
 
 				</div>
 				</div>
-				
+				<div className="d-flex justify-content-center p-5">
+					<button onClick={deleteAllTask}>Eliminate all task</button>
+				</div>
 				
 			</div>
 		</div>
